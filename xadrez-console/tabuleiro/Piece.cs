@@ -7,9 +7,9 @@
         public int moveNum { get; protected set; }
         public Chessboard board { get; protected set; }
 
-        public Piece(Position pos, Color color, Chessboard board)
+        public Piece(Chessboard board, Color color)
         {
-            this.pos = pos;
+            pos = null;
             this.color = color;
             this.board = board;
             moveNum = 0;
