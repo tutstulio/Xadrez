@@ -6,8 +6,4 @@
     <RootNamespace>xadrez_console</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Tabuleiro\" />
-  </ItemGroup>
-
 </Project>

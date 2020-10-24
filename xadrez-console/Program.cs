@@ -7,7 +7,11 @@ namespace xadrez_console
     {
         static void Main(string[] args)
         {
-            
+            Chessboard board = new Chessboard(8, 8);
+
+            Screen.printBoard(board);
+
+            Console.ReadKey();
         }
     }
 }
