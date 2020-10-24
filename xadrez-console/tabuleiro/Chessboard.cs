@@ -18,10 +18,40 @@
             return pieces[i, j];
         }
 
+        public Piece piece(Position pos)
+        {
+            return pieces[pos.line, pos.column];
+        }
+
         public void putPiece(Piece p, Position pos)
         {
-            pieces[pos.line, pos.column] = p;
-            p.pos = pos;
+            if (hasPiece(pos))
+                throw new ChessboardException("Já existe uma peça nessa posição");
+            else
+            {
+                pieces[pos.line, pos.column] = p;
+                p.pos = pos;
+            }
+        }
+
+        public bool hasPiece(Position pos)
+        {
+            validPosition(pos);
+            return piece(pos) != null;
+        }
+
+        public void validPosition(Position pos)
+        {
+            if (!isValid(pos))
+                throw new ChessboardException("Posição inválida");
+        }
+
+        public bool isValid(Position pos)
+        {
+            if (pos.line < 0 || pos.line >= lines || pos.column < 0 || pos.column >= columns)
+                return false;
+            else
+                return true;
         }
     }
 }
