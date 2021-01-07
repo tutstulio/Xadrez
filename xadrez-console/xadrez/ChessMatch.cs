@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using tabuleiro;
 
 namespace xadrez
@@ -9,6 +10,8 @@ namespace xadrez
         public int turn { get; private set; }
         public Color currentPlayer { get; private set; }
         public bool end { get; private set; }
+        private HashSet<Piece> pieces;
+        private HashSet<Piece> capturedPieces;
 
         public ChessMatch()
         {
@@ -16,6 +19,8 @@ namespace xadrez
             turn = 1;
             currentPlayer = Color.Branca;
             end = false;
+            pieces = new HashSet<Piece>();
+            capturedPieces = new HashSet<Piece>();
             putPieces();
         }
 
@@ -23,25 +28,10 @@ namespace xadrez
         {
             Piece p = board.removePiece(origin);
             p.incrementMovement();
-            Piece capturePiece = board.removePiece(destiny);
+            Piece capturedPiece = board.removePiece(destiny);
             board.putPiece(p, destiny);
-        }
-
-        private void putPieces()
-        {
-            board.putPiece(new Tower(board, Color.Branca), new ChessPosition('c', 1).toPosition());
-            board.putPiece(new Tower(board, Color.Branca), new ChessPosition('c', 2).toPosition());
-            board.putPiece(new King(board, Color.Branca), new ChessPosition('d', 1).toPosition());
-            board.putPiece(new Tower(board, Color.Branca), new ChessPosition('d', 2).toPosition());
-            board.putPiece(new Tower(board, Color.Branca), new ChessPosition('e', 1).toPosition());
-            board.putPiece(new Tower(board, Color.Branca), new ChessPosition('e', 2).toPosition());
-
-            board.putPiece(new Tower(board, Color.Preta), new ChessPosition('c', 8).toPosition());
-            board.putPiece(new Tower(board, Color.Preta), new ChessPosition('c', 7).toPosition());
-            board.putPiece(new King(board, Color.Preta), new ChessPosition('d', 8).toPosition());
-            board.putPiece(new Tower(board, Color.Preta), new ChessPosition('d', 7).toPosition());
-            board.putPiece(new Tower(board, Color.Preta), new ChessPosition('e', 8).toPosition());
-            board.putPiece(new Tower(board, Color.Preta), new ChessPosition('e', 7).toPosition());
+            if (capturedPiece != null)
+                capturedPieces.Add(capturedPiece);
         }
 
         public void releaseTurn(Position origin, Position destiny)
@@ -59,6 +49,25 @@ namespace xadrez
                 currentPlayer = Color.Branca;
         }
 
+        public HashSet<Piece> getCapturedPieces(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in capturedPieces)
+                if (p.color == color)
+                    aux.Add(p);
+            return aux;
+        }
+
+        public HashSet<Piece> getPieces(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in pieces)
+                if (p.color == color)
+                    aux.Add(p);
+            aux.ExceptWith(getCapturedPieces(color));
+            return aux;
+        }
+
         public void checkOriginPosition(Position pos)
         {
             if (board.piece(pos) == null)
@@ -73,8 +82,31 @@ namespace xadrez
 
         public void checkDestinyPosition(Position origin, Position destiny)
         {
-            if (board.piece(origin).canMoveTo(destiny))
+            if (!board.piece(origin).canMoveTo(destiny))
                 throw new ChessboardException("Posição de destino inválida!");
+        }
+
+        public void putNewPiece(char column, int line, Piece piece)
+        {
+            board.putPiece(piece, new ChessPosition(column, line).toPosition());
+            pieces.Add(piece);
+        }
+
+        private void putPieces()
+        {
+            putNewPiece('c', 1, new Tower(board, Color.Branca));
+            putNewPiece('c', 2, new Tower(board, Color.Branca));
+            putNewPiece('d', 1, new King(board, Color.Branca));
+            putNewPiece('d', 2, new Tower(board, Color.Branca));
+            putNewPiece('e', 1, new Tower(board, Color.Branca));
+            putNewPiece('e', 2, new Tower(board, Color.Branca));
+
+            putNewPiece('c', 8, new Tower(board, Color.Preta));
+            putNewPiece('c', 7, new Tower(board, Color.Preta));
+            putNewPiece('d', 8, new King(board, Color.Preta));
+            putNewPiece('d', 7, new Tower(board, Color.Preta));
+            putNewPiece('e', 8, new Tower(board, Color.Preta));
+            putNewPiece('e', 7, new Tower(board, Color.Preta));
         }
     }
 }

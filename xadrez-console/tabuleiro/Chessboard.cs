@@ -4,7 +4,7 @@
     {
         public int lines { get; set; }
         public int columns { get; set; }
-        private Piece[,] pieces { get; set; }
+        private Piece[,] pieces;
 
         public Chessboard(int lines, int columns)
         {
@@ -27,24 +27,18 @@
         {
             if (hasPiece(pos))
                 throw new ChessboardException("Já existe uma peça nessa posição");
-            else
-            {
-                pieces[pos.line, pos.column] = p;
-                p.position = pos;
-            }
+            pieces[pos.line, pos.column] = p;
+            p.position = pos;
         }
 
         public Piece removePiece(Position pos)
         {
             if (piece(pos) == null)
                 return null;
-            else
-            {
-                Piece aux = piece(pos);
-                aux.position = null;
-                pieces[pos.line, pos.column] = null;
-                return aux;
-            }
+            Piece aux = piece(pos);
+            aux.position = null;
+            pieces[pos.line, pos.column] = null;
+            return aux;
         }
 
         public bool hasPiece(Position pos)
@@ -56,15 +50,14 @@
         public void validPosition(Position pos)
         {
             if (!isValid(pos))
-                throw new ChessboardException("Posição inválida");
+                throw new ChessboardException("Posição inválida!");
         }
 
         public bool isValid(Position pos)
         {
             if (pos.line < 0 || pos.line >= lines || pos.column < 0 || pos.column >= columns)
                 return false;
-            else
-                return true;
+            return true;
         }
     }
 }
