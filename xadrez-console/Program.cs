@@ -14,21 +14,34 @@ namespace xadrez_console
 
                 while(!match.end)
                 {
-                    Console.Clear();
-                    Screen.printBoard(match.board);
+                    try
+                    {
+                        Console.Clear();
+                        Screen.printBoard(match.board);
 
-                    Console.Write("\nOrigem: ");
-                    Position origin = Screen.readChessPosition().toPosition();
+                        Console.WriteLine("\nTurno: " + match.turn);
+                        Console.WriteLine("Aguardando a jogada: " + match.currentPlayer);
 
-                    bool[,] possiblePositions = match.board.piece(origin).possibleMovements();
+                        Console.Write("\nOrigem: ");
+                        Position origin = Screen.readChessPosition().toPosition();
+                        match.checkOriginPosition(origin);
 
-                    Console.Clear();
-                    Screen.printBoard(match.board, possiblePositions);
+                        bool[,] possiblePositions = match.board.piece(origin).possibleMovements();
 
-                    Console.Write("\nDestino: ");
-                    Position destiny = Screen.readChessPosition().toPosition();
+                        Console.Clear();
+                        Screen.printBoard(match.board, possiblePositions);
 
-                    match.move(origin, destiny);
+                        Console.Write("\nDestino: ");
+                        Position destiny = Screen.readChessPosition().toPosition();
+                        match.checkDestinyPosition(origin, destiny);
+
+                        match.releaseTurn(origin, destiny);
+                    }
+                    catch (ChessboardException ce)
+                    {
+                        Console.WriteLine(ce.Message);
+                        Console.ReadLine();
+                    }
                 }
             }
             catch (ChessboardException ce)
