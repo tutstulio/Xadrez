@@ -30,7 +30,20 @@
             else
             {
                 pieces[pos.line, pos.column] = p;
-                p.pos = pos;
+                p.position = pos;
+            }
+        }
+
+        public Piece removePiece(Position pos)
+        {
+            if (piece(pos) == null)
+                return null;
+            else
+            {
+                Piece aux = piece(pos);
+                aux.position = null;
+                pieces[pos.line, pos.column] = null;
+                return aux;
             }
         }
 

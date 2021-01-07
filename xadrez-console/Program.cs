@@ -8,9 +8,33 @@ namespace xadrez_console
     {
         static void Main(string[] args)
         {
-            ChessPosition pos = new ChessPosition('c', 7);
-            Console.WriteLine(pos);
-            Console.WriteLine(pos.toPosition());
+            try
+            {
+                ChessMatch match = new ChessMatch();
+
+                while(!match.end)
+                {
+                    Console.Clear();
+                    Screen.printBoard(match.board);
+
+                    Console.Write("\nOrigem: ");
+                    Position origin = Screen.readChessPosition().toPosition();
+
+                    bool[,] possiblePositions = match.board.piece(origin).possibleMovements();
+
+                    Console.Clear();
+                    Screen.printBoard(match.board, possiblePositions);
+
+                    Console.Write("\nDestino: ");
+                    Position destiny = Screen.readChessPosition().toPosition();
+
+                    match.move(origin, destiny);
+                }
+            }
+            catch (ChessboardException ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
 
             Console.ReadKey();
         }
