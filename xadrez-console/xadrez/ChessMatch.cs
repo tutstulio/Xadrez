@@ -65,8 +65,13 @@ namespace xadrez
             else
                 check = false;
 
-            changePlayer();
-            turn++;
+            if (isCheckMate(adversary(currentPlayer)))
+                end = true;
+            else
+            {
+                changePlayer();
+                turn++;
+            }
         }
 
         private void changePlayer()
@@ -145,6 +150,30 @@ namespace xadrez
             return false;
         }
 
+        public bool isCheckMate(Color color)
+        {
+            if (!isCheck(color))
+                return false;
+
+            foreach (Piece p in getPieces(color))
+            {
+                bool[,] m = p.possibleMovements();
+                for (int i = 0; i < board.lines; i++)
+                    for (int j = 0; j < board.columns; j++)
+                        if (m[i, j])
+                        {
+                            Position origin = p.position;
+                            Position destiny = new Position(i, j);
+                            Piece capturedPiece = move(origin, destiny);
+                            bool testCheck = isCheck(color);
+                            undoMovement(origin, destiny, capturedPiece);
+                            if (!testCheck)
+                                return false;
+                        }
+            }
+            return true;
+        }
+
         public void putNewPiece(char column, int line, Piece piece)
         {
             board.putPiece(piece, new ChessPosition(column, line).toPosition());
@@ -154,18 +183,11 @@ namespace xadrez
         private void putPieces()
         {
             putNewPiece('c', 1, new Tower(board, Color.Branca));
-            putNewPiece('c', 2, new Tower(board, Color.Branca));
             putNewPiece('d', 1, new King(board, Color.Branca));
-            putNewPiece('d', 2, new Tower(board, Color.Branca));
-            putNewPiece('e', 1, new Tower(board, Color.Branca));
-            putNewPiece('e', 2, new Tower(board, Color.Branca));
+            putNewPiece('h', 7, new Tower(board, Color.Branca));
 
-            putNewPiece('c', 8, new Tower(board, Color.Preta));
-            putNewPiece('c', 7, new Tower(board, Color.Preta));
-            putNewPiece('d', 8, new King(board, Color.Preta));
-            putNewPiece('d', 7, new Tower(board, Color.Preta));
-            putNewPiece('e', 8, new Tower(board, Color.Preta));
-            putNewPiece('e', 7, new Tower(board, Color.Preta));
+            putNewPiece('a', 8, new King(board, Color.Preta));
+            putNewPiece('b', 8, new Tower(board, Color.Preta));
         }
     }
 }
