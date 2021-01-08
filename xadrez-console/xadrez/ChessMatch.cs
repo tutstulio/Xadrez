@@ -182,12 +182,39 @@ namespace xadrez
 
         private void putPieces()
         {
-            putNewPiece('c', 1, new Tower(board, Color.Branca));
-            putNewPiece('d', 1, new King(board, Color.Branca));
-            putNewPiece('h', 7, new Tower(board, Color.Branca));
+            putNewPiece('a', 1, new Tower(board, Color.Branca));
+            putNewPiece('b', 1, new Horse(board, Color.Branca));
+            putNewPiece('c', 1, new Bishop(board, Color.Branca));
+            putNewPiece('d', 1, new Queen(board, Color.Branca));
+            putNewPiece('e', 1, new King(board, Color.Branca));
+            putNewPiece('f', 1, new Bishop(board, Color.Branca));
+            putNewPiece('g', 1, new Horse(board, Color.Branca));
+            putNewPiece('h', 1, new Tower(board, Color.Branca));
+            putNewPiece('a', 2, new Peon(board, Color.Branca));
+            putNewPiece('b', 2, new Peon(board, Color.Branca));
+            putNewPiece('c', 2, new Peon(board, Color.Branca));
+            putNewPiece('d', 2, new Peon(board, Color.Branca));
+            putNewPiece('e', 2, new Peon(board, Color.Branca));
+            putNewPiece('f', 2, new Peon(board, Color.Branca));
+            putNewPiece('g', 2, new Peon(board, Color.Branca));
+            putNewPiece('h', 2, new Peon(board, Color.Branca));
 
-            putNewPiece('a', 8, new King(board, Color.Preta));
-            putNewPiece('b', 8, new Tower(board, Color.Preta));
+            putNewPiece('a', 8, new Tower(board, Color.Preta));
+            putNewPiece('b', 8, new Horse(board, Color.Preta));
+            putNewPiece('c', 8, new Bishop(board, Color.Preta));
+            putNewPiece('d', 8, new Queen(board, Color.Preta));
+            putNewPiece('e', 8, new King(board, Color.Preta));
+            putNewPiece('f', 8, new Bishop(board, Color.Preta));
+            putNewPiece('g', 8, new Horse(board, Color.Preta));
+            putNewPiece('h', 8, new Tower(board, Color.Preta));
+            putNewPiece('a', 7, new Peon(board, Color.Preta));
+            putNewPiece('b', 7, new Peon(board, Color.Preta));
+            putNewPiece('c', 7, new Peon(board, Color.Preta));
+            putNewPiece('d', 7, new Peon(board, Color.Preta));
+            putNewPiece('e', 7, new Peon(board, Color.Preta));
+            putNewPiece('f', 7, new Peon(board, Color.Preta));
+            putNewPiece('g', 7, new Peon(board, Color.Preta));
+            putNewPiece('h', 7, new Peon(board, Color.Preta));
         }
     }
 }
