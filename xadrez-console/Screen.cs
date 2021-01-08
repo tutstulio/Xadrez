@@ -13,6 +13,8 @@ namespace xadrez_console
             printCapturedPieces(match);
             Console.WriteLine("\nTurno: " + match.turn);
             Console.WriteLine("Aguardando a jogada: " + match.currentPlayer);
+            if (match.check)
+                Console.WriteLine("XEQUE!");
         }
 
         public static void printCapturedPieces(ChessMatch match)

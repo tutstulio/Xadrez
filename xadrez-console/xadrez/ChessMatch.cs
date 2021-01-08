@@ -10,6 +10,7 @@ namespace xadrez
         public int turn { get; private set; }
         public Color currentPlayer { get; private set; }
         public bool end { get; private set; }
+        public bool check { get; private set; }
         private HashSet<Piece> pieces;
         private HashSet<Piece> capturedPieces;
 
@@ -19,12 +20,13 @@ namespace xadrez
             turn = 1;
             currentPlayer = Color.Branca;
             end = false;
+            check = false;
             pieces = new HashSet<Piece>();
             capturedPieces = new HashSet<Piece>();
             putPieces();
         }
 
-        public void move(Position origin, Position destiny)
+        public Piece move(Position origin, Position destiny)
         {
             Piece p = board.removePiece(origin);
             p.incrementMovement();
@@ -32,13 +34,39 @@ namespace xadrez
             board.putPiece(p, destiny);
             if (capturedPiece != null)
                 capturedPieces.Add(capturedPiece);
+
+            return capturedPiece;
+        }
+
+        public void undoMovement(Position origin, Position destiny, Piece capturedPiece)
+        {
+            Piece p = board.removePiece(destiny);
+            p.decrementMovement();
+            if (capturedPiece != null)
+            {
+                board.putPiece(capturedPiece, destiny);
+                capturedPieces.Remove(capturedPiece);
+            }
+            board.putPiece(p, origin);
         }
 
         public void releaseTurn(Position origin, Position destiny)
         {
-            move(origin, destiny);
-            turn++;
+            Piece capturedPiece = move(origin, destiny);
+
+            if (isCheck(currentPlayer))
+            {
+                undoMovement(origin, destiny, capturedPiece);
+                throw new ChessboardException("Não é possível se colocar em xeque!");
+            }
+
+            if (isCheck(adversary(currentPlayer)))
+                check = true;
+            else
+                check = false;
+
             changePlayer();
+            turn++;
         }
 
         private void changePlayer()
@@ -84,6 +112,37 @@ namespace xadrez
         {
             if (!board.piece(origin).canMoveTo(destiny))
                 throw new ChessboardException("Posição de destino inválida!");
+        }
+
+        private Color adversary(Color color)
+        {
+            if (color == Color.Branca)
+                return Color.Preta;
+            else
+                return Color.Branca;
+        }
+
+        private Piece getKing(Color color)
+        {
+            foreach (Piece p in getPieces(color))
+                if (p is King)
+                    return p;
+            return null;
+        }
+
+        public bool isCheck(Color color)
+        {
+            Piece r = getKing(color);
+            if (r == null)
+                throw new ChessboardException("Não tem rei da cor" + color + " no tabuleiro!");
+
+            foreach (Piece p in getPieces(adversary(color)))
+            {
+                bool[,] m = p.possibleMovements();
+                if (m[r.position.line, r.position.column])
+                    return true;
+            }
+            return false;
         }
 
         public void putNewPiece(char column, int line, Piece piece)

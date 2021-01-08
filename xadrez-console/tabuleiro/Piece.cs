@@ -20,6 +20,11 @@
             moveNum++;
         }
 
+        public void decrementMovement()
+        {
+            moveNum--;
+        }
+
         public bool existPossibleMovements()
         {
             bool[,] m = possibleMovements();
