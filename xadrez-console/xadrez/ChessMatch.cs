@@ -28,6 +28,7 @@ namespace xadrez
 
         public Piece move(Position origin, Position destiny)
         {
+            // General Mecanics
             Piece p = board.removePiece(origin);
             p.incrementMovement();
             Piece capturedPiece = board.removePiece(destiny);
@@ -35,11 +36,32 @@ namespace xadrez
             if (capturedPiece != null)
                 capturedPieces.Add(capturedPiece);
 
+            // #Roque Pequeno
+            if (p is King && destiny.column == origin.column + 2)
+            {
+                Position towerOrigin = new Position(origin.line, origin.column + 3);
+                Position towerDestiny = new Position(origin.line, origin.column + 1);
+                Piece t = board.removePiece(towerOrigin);
+                t.incrementMovement();
+                board.putPiece(t, towerDestiny);
+            }
+
+            // #Roque Grande
+            if (p is King && destiny.column == origin.column - 2)
+            {
+                Position towerOrigin = new Position(origin.line, origin.column - 4);
+                Position towerDestiny = new Position(origin.line, origin.column - 1);
+                Piece t = board.removePiece(towerOrigin);
+                t.incrementMovement();
+                board.putPiece(t, towerDestiny);
+            }
+
             return capturedPiece;
         }
 
         public void undoMovement(Position origin, Position destiny, Piece capturedPiece)
         {
+            // General Mecanics
             Piece p = board.removePiece(destiny);
             p.decrementMovement();
             if (capturedPiece != null)
@@ -48,6 +70,26 @@ namespace xadrez
                 capturedPieces.Remove(capturedPiece);
             }
             board.putPiece(p, origin);
+
+            // #Roque Pequeno
+            if (p is King && destiny.column == origin.column + 2)
+            {
+                Position towerOrigin = new Position(origin.line, origin.column + 3);
+                Position towerDestiny = new Position(origin.line, origin.column + 1);
+                Piece t = board.removePiece(towerDestiny);
+                t.decrementMovement();
+                board.putPiece(t, towerOrigin);
+            }
+
+            // #Roque Grande
+            if (p is King && destiny.column == origin.column - 2)
+            {
+                Position towerOrigin = new Position(origin.line, origin.column - 4);
+                Position towerDestiny = new Position(origin.line, origin.column - 1);
+                Piece t = board.removePiece(towerDestiny);
+                t.decrementMovement();
+                board.putPiece(t, towerOrigin);
+            }
         }
 
         public void releaseTurn(Position origin, Position destiny)
@@ -137,14 +179,14 @@ namespace xadrez
 
         public bool isCheck(Color color)
         {
-            Piece r = getKing(color);
-            if (r == null)
+            Piece k = getKing(color);
+            if (k == null)
                 throw new ChessboardException("Não tem rei da cor" + color + " no tabuleiro!");
 
             foreach (Piece p in getPieces(adversary(color)))
             {
                 bool[,] m = p.possibleMovements();
-                if (m[r.position.line, r.position.column])
+                if (m[k.position.line, k.position.column])
                     return true;
             }
             return false;
@@ -186,7 +228,7 @@ namespace xadrez
             putNewPiece('b', 1, new Horse(board, Color.Branca));
             putNewPiece('c', 1, new Bishop(board, Color.Branca));
             putNewPiece('d', 1, new Queen(board, Color.Branca));
-            putNewPiece('e', 1, new King(board, Color.Branca));
+            putNewPiece('e', 1, new King(board, Color.Branca, this));
             putNewPiece('f', 1, new Bishop(board, Color.Branca));
             putNewPiece('g', 1, new Horse(board, Color.Branca));
             putNewPiece('h', 1, new Tower(board, Color.Branca));
@@ -203,7 +245,7 @@ namespace xadrez
             putNewPiece('b', 8, new Horse(board, Color.Preta));
             putNewPiece('c', 8, new Bishop(board, Color.Preta));
             putNewPiece('d', 8, new Queen(board, Color.Preta));
-            putNewPiece('e', 8, new King(board, Color.Preta));
+            putNewPiece('e', 8, new King(board, Color.Preta, this));
             putNewPiece('f', 8, new Bishop(board, Color.Preta));
             putNewPiece('g', 8, new Horse(board, Color.Preta));
             putNewPiece('h', 8, new Tower(board, Color.Preta));
