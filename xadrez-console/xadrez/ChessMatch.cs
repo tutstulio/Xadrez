@@ -129,11 +129,25 @@ namespace xadrez
         public void releaseTurn(Position origin, Position destiny)
         {
             Piece capturedPiece = move(origin, destiny);
+            Piece p = board.piece(destiny);
 
             if (isCheck(currentPlayer))
             {
                 undoMovement(origin, destiny, capturedPiece);
                 throw new ChessboardException("Não é possível se colocar em xeque!");
+            }
+
+            // #Promotion
+            if (p is Peon)
+            {
+                if ((p.color == Color.Branca && destiny.line == 0) || (p.color == Color.Preta && destiny.line == 0))
+                {
+                    p = board.removePiece(destiny);
+                    pieces.Remove(p);
+                    Piece queen = new Queen(board, p.color);
+                    board.putPiece(queen, destiny);
+                    pieces.Add(queen);
+                }
             }
 
             if (isCheck(adversary(currentPlayer)))
@@ -150,7 +164,6 @@ namespace xadrez
             }
 
             // #En Passant
-            Piece p = board.piece(destiny);
             if (p is Peon && (destiny.line == origin.line - 2 || destiny.line == origin.line + 2))
                 enPassantVulnerable = p;
             else
