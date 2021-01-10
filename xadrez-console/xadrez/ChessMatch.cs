@@ -7,8 +7,9 @@ namespace xadrez
     class ChessMatch
     {
         public Chessboard board { get; private set; }
-        public int turn { get; private set; }
         public Color currentPlayer { get; private set; }
+        public Piece enPassantVulnerable { get; private set; }
+        public int turn { get; private set; }
         public bool end { get; private set; }
         public bool check { get; private set; }
         private HashSet<Piece> pieces;
@@ -56,6 +57,22 @@ namespace xadrez
                 board.putPiece(t, towerDestiny);
             }
 
+            // #En Passant
+            if (p is Peon)
+            {
+                if (origin.column != destiny.column && capturedPiece == null)
+                {
+                    Position peonPos;
+                    if (p.color == Color.Branca)
+                        peonPos = new Position(destiny.line + 1, destiny.column);
+                    else
+                        peonPos = new Position(destiny.line - 1, destiny.column);
+                    
+                    capturedPiece = board.removePiece(peonPos);
+                    capturedPieces.Add(capturedPiece);
+                }
+            }
+
             return capturedPiece;
         }
 
@@ -90,6 +107,23 @@ namespace xadrez
                 t.decrementMovement();
                 board.putPiece(t, towerOrigin);
             }
+
+            // #En Passant
+            if (p is Peon)
+            {
+                if (origin.column != destiny.column && capturedPiece == enPassantVulnerable)
+                {
+                    Piece peon = board.removePiece(destiny);
+                    Position peonPos;
+
+                    if (p.color == Color.Branca)
+                        peonPos = new Position(3, destiny.column);
+                    else
+                        peonPos = new Position(4, destiny.column);
+
+                    board.putPiece(peon, peonPos);
+                }
+            }
         }
 
         public void releaseTurn(Position origin, Position destiny)
@@ -114,6 +148,14 @@ namespace xadrez
                 changePlayer();
                 turn++;
             }
+
+            // #En Passant
+            Piece p = board.piece(destiny);
+            if (p is Peon && (destiny.line == origin.line - 2 || destiny.line == origin.line + 2))
+                enPassantVulnerable = p;
+            else
+                enPassantVulnerable = null;
+
         }
 
         private void changePlayer()
@@ -232,14 +274,14 @@ namespace xadrez
             putNewPiece('f', 1, new Bishop(board, Color.Branca));
             putNewPiece('g', 1, new Horse(board, Color.Branca));
             putNewPiece('h', 1, new Tower(board, Color.Branca));
-            putNewPiece('a', 2, new Peon(board, Color.Branca));
-            putNewPiece('b', 2, new Peon(board, Color.Branca));
-            putNewPiece('c', 2, new Peon(board, Color.Branca));
-            putNewPiece('d', 2, new Peon(board, Color.Branca));
-            putNewPiece('e', 2, new Peon(board, Color.Branca));
-            putNewPiece('f', 2, new Peon(board, Color.Branca));
-            putNewPiece('g', 2, new Peon(board, Color.Branca));
-            putNewPiece('h', 2, new Peon(board, Color.Branca));
+            putNewPiece('a', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('b', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('c', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('d', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('e', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('f', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('g', 2, new Peon(board, Color.Branca, this));
+            putNewPiece('h', 2, new Peon(board, Color.Branca, this));
 
             putNewPiece('a', 8, new Tower(board, Color.Preta));
             putNewPiece('b', 8, new Horse(board, Color.Preta));
@@ -249,14 +291,14 @@ namespace xadrez
             putNewPiece('f', 8, new Bishop(board, Color.Preta));
             putNewPiece('g', 8, new Horse(board, Color.Preta));
             putNewPiece('h', 8, new Tower(board, Color.Preta));
-            putNewPiece('a', 7, new Peon(board, Color.Preta));
-            putNewPiece('b', 7, new Peon(board, Color.Preta));
-            putNewPiece('c', 7, new Peon(board, Color.Preta));
-            putNewPiece('d', 7, new Peon(board, Color.Preta));
-            putNewPiece('e', 7, new Peon(board, Color.Preta));
-            putNewPiece('f', 7, new Peon(board, Color.Preta));
-            putNewPiece('g', 7, new Peon(board, Color.Preta));
-            putNewPiece('h', 7, new Peon(board, Color.Preta));
+            putNewPiece('a', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('b', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('c', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('d', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('e', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('f', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('g', 7, new Peon(board, Color.Preta, this));
+            putNewPiece('h', 7, new Peon(board, Color.Preta, this));
         }
     }
 }
